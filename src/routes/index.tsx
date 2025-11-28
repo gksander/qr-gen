@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useState, useRef, useEffect } from 'react'
 import qrcode from 'qrcode-generator'
 import { Input } from '@/components/ui/input'
+import { generateQRData, getQRMetadata } from '@/lib/qr'
 
 export const Route = createFileRoute('/')({ component: App })
 
@@ -13,16 +14,26 @@ function App() {
   useEffect(() => {
     if (url && canvasRef.current) {
       try {
-        // Generate QR code data
-        const qr = qrcode(level, 'M') // Error correction level M (Medium)
-        qr.addData(url)
-        qr.make()
+        console.log(getQRMetadata({ data: url, errorCorrectionLevel: 'M' }))
 
-        // Get the module count (QR code size)
-        const moduleCount = qr.getModuleCount()
+        const { dimension, isFilled, isInFinderPattern } = generateQRData({
+          data: url,
+          typeNumber: level,
+          errorCorrectionLevel: 'L',
+        })
+
+        console.log(dimension)
+
+        // // Generate QR code data
+        // const qr = qrcode(level, 'M') // Error correction level M (Medium)
+        // qr.addData(url)
+        // qr.make()
+
+        // // Get the module count (QR code size)
+        // const moduleCount = qr.getModuleCount()
         const margin = 2
         const scale = 10 // pixels per module
-        const size = moduleCount * scale + margin * 2 * scale
+        const size = dimension * scale + margin * 2 * scale
 
         // Set canvas size
         const canvas = canvasRef.current
@@ -36,13 +47,11 @@ function App() {
         ctx.fillStyle = '#ffffff'
         ctx.fillRect(0, 0, size, size)
 
-        console.log(qr.getModuleCount())
-
         // Draw QR code modules
         ctx.fillStyle = '#000000'
-        for (let row = 0; row < moduleCount; row++) {
-          for (let col = 0; col < moduleCount; col++) {
-            if (qr.isDark(row, col)) {
+        for (let row = 0; row < dimension; row++) {
+          for (let col = 0; col < dimension; col++) {
+            if (isFilled({ x: col, y: row })) {
               const x = col * scale + margin * scale
               const y = row * scale + margin * scale
               ctx.fillRect(x, y, scale, scale)
