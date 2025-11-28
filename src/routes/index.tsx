@@ -6,14 +6,15 @@ import { Input } from '@/components/ui/input'
 export const Route = createFileRoute('/')({ component: App })
 
 function App() {
-  const [url, setUrl] = useState('')
+  const [url, setUrl] = useState('https://gksander.com')
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [level, setLevel] = useState<TypeNumber>(0)
 
   useEffect(() => {
     if (url && canvasRef.current) {
       try {
         // Generate QR code data
-        const qr = qrcode(0, 'M') // Error correction level M (Medium)
+        const qr = qrcode(level, 'M') // Error correction level M (Medium)
         qr.addData(url)
         qr.make()
 
@@ -52,7 +53,7 @@ function App() {
         console.error('Error generating QR code:', err)
       }
     }
-  }, [url])
+  }, [url, level])
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-8 gap-8">
@@ -65,11 +66,20 @@ function App() {
           onChange={(e) => setUrl(e.target.value)}
           className="w-full"
         />
+        <Input
+          type="number"
+          placeholder="Enter the level"
+          value={level}
+          onChange={(e) => setLevel(Number(e.target.value) as TypeNumber)}
+          min={0}
+          max={40}
+          className="w-full"
+        />
         {url && (
           <div className="flex justify-center">
             <canvas
               ref={canvasRef}
-              className="border rounded-lg p-4 bg-white"
+              className="border rounded-lg p-4 bg-white w-100 h-100"
             />
           </div>
         )}
