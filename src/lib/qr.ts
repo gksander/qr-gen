@@ -283,35 +283,14 @@ type RSBlock = {
   dataCount: number
 }
 
-// Utility: Convert string to UTF-8 bytes
-function stringToUTF8Bytes(s: string): number[] {
-  const utf8: number[] = []
+// Utility: Convert string to bytes using Latin-1 encoding (default for qrcode-generator)
+function stringToBytes(s: string): number[] {
+  const bytes: number[] = []
   for (let i = 0; i < s.length; i++) {
     const charcode = s.charCodeAt(i)
-    if (charcode < 0x80) {
-      utf8.push(charcode)
-    } else if (charcode < 0x800) {
-      utf8.push(0xc0 | (charcode >> 6), 0x80 | (charcode & 0x3f))
-    } else if (charcode < 0xd800 || charcode >= 0xe000) {
-      utf8.push(
-        0xe0 | (charcode >> 12),
-        0x80 | ((charcode >> 6) & 0x3f),
-        0x80 | (charcode & 0x3f),
-      )
-    } else {
-      // Surrogate pair
-      i++
-      const charcode2 = s.charCodeAt(i)
-      const code = 0x10000 + (((charcode & 0x3ff) << 10) | (charcode2 & 0x3ff))
-      utf8.push(
-        0xf0 | (code >> 18),
-        0x80 | ((code >> 12) & 0x3f),
-        0x80 | ((code >> 6) & 0x3f),
-        0x80 | (code & 0x3f),
-      )
-    }
+    bytes.push(charcode & 0xff)
   }
-  return utf8
+  return bytes
 }
 
 // Bit buffer for encoding
@@ -471,8 +450,27 @@ function getRSBlocks(
   typeNumber: number,
   errorCorrectionLevel: QRErrorCorrectionLevel,
 ): RSBlock[] {
+  // Map error correction level to RS block table index
+  // L (value 1) -> index 0, M (value 0) -> index 1, Q (value 3) -> index 2, H (value 2) -> index 3
   const errorLevel = QRErrorCorrectionLevelMap[errorCorrectionLevel]
-  const rsBlock = RS_BLOCK_TABLE[(typeNumber - 1) * 4 + errorLevel]
+  let rsBlockIndex: number
+  switch (errorLevel) {
+    case 1: // L
+      rsBlockIndex = (typeNumber - 1) * 4 + 0
+      break
+    case 0: // M
+      rsBlockIndex = (typeNumber - 1) * 4 + 1
+      break
+    case 3: // Q
+      rsBlockIndex = (typeNumber - 1) * 4 + 2
+      break
+    case 2: // H
+      rsBlockIndex = (typeNumber - 1) * 4 + 3
+      break
+    default:
+      throw new Error(`Invalid error correction level: ${errorCorrectionLevel}`)
+  }
+  const rsBlock = RS_BLOCK_TABLE[rsBlockIndex]
 
   if (!rsBlock) {
     throw new Error(
@@ -1016,7 +1014,7 @@ export function getQRMetadata({
   data: string
   errorCorrectionLevel: QRErrorCorrectionLevel
 }): QRMetadata {
-  const bytes = stringToUTF8Bytes(data)
+  const bytes = stringToBytes(data)
 
   for (let typeNumber = 1; typeNumber <= 40; typeNumber++) {
     const buffer = new BitBuffer()
@@ -1093,7 +1091,7 @@ export function generateQRData({
   }
 
   // Encode data
-  const bytes = stringToUTF8Bytes(data)
+  const bytes = stringToBytes(data)
   const buffer = new BitBuffer()
 
   // Add mode indicator
@@ -1239,7 +1237,7 @@ export function generateQRData({
   }
 }
 
-type QRTypeNumber =
+export type QRTypeNumber =
   | 0
   | 1
   | 2
@@ -1282,4 +1280,4 @@ type QRTypeNumber =
   | 39
   | 40
 
-type QRErrorCorrectionLevel = 'L' | 'M' | 'Q' | 'H'
+export type QRErrorCorrectionLevel = 'L' | 'M' | 'Q' | 'H'
