@@ -1,78 +1,18 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useDeferredValue } from 'react'
 import qrcode from 'qrcode-generator'
 import { Input } from '@/components/ui/input'
 import { generateQRData, getQRMetadata } from '@/lib/qr'
+import { QRCode } from '@/components/QRCode'
 
 export const Route = createFileRoute('/')({ component: App })
 
 function App() {
   const [url, setUrl] = useState('https://gksander.com')
-  const canvasRef = useRef<HTMLCanvasElement>(null)
   const [level, setLevel] = useState<TypeNumber>(0)
 
-  useEffect(() => {
-    if (url && canvasRef.current) {
-      try {
-        const {
-          dimension,
-          isFilled,
-          isInPositionProbe: isInFinderPattern,
-          getLocationType,
-        } = generateQRData({
-          data: url,
-          typeNumber: level,
-          errorCorrectionLevel: 'L',
-        })
-
-        const margin = 2
-        const scale = 10 // pixels per module
-        const size = dimension * scale + margin * 2 * scale
-
-        // Set canvas size
-        const canvas = canvasRef.current
-        canvas.width = size
-        canvas.height = size
-
-        const ctx = canvas.getContext('2d')
-        if (!ctx) return
-
-        // Clear canvas with white background
-        ctx.fillStyle = '#ffffff'
-        ctx.fillRect(0, 0, size, size)
-
-        // Draw QR code modules
-        for (let row = 0; row < dimension; row++) {
-          for (let col = 0; col < dimension; col++) {
-            const locationType = getLocationType({ x: col, y: row })
-            if (locationType === 'empty') continue
-
-            if (locationType === 'data') {
-              ctx.fillStyle = '#000'
-            }
-            if (locationType === 'positionProbeOuter') {
-              ctx.fillStyle = '#f00'
-            }
-            if (locationType === 'positionProbeInner') {
-              ctx.fillStyle = '#00f'
-            }
-            if (locationType === 'alignmentPatternOuter') {
-              ctx.fillStyle = '#0f0'
-            }
-            if (locationType === 'alignmentPatternInner') {
-              ctx.fillStyle = '#f0f'
-            }
-
-            const x = col * scale + margin * scale
-            const y = row * scale + margin * scale
-            ctx.fillRect(x, y, scale, scale)
-          }
-        }
-      } catch (err) {
-        console.error('Error generating QR code:', err)
-      }
-    }
-  }, [url, level])
+  const deferredUrl = useDeferredValue(url)
+  const deferredLevel = useDeferredValue(level)
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-8 gap-8">
@@ -96,9 +36,10 @@ function App() {
         />
         {url && (
           <div className="flex justify-center">
-            <canvas
-              ref={canvasRef}
-              className="border rounded-lg p-4 bg-white w-100 h-100"
+            <QRCode
+              data={deferredUrl}
+              typeNumber={deferredLevel}
+              errorCorrectionLevel="M"
             />
           </div>
         )}
