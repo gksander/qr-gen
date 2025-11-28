@@ -4,6 +4,8 @@ import { generateQRData, getQRMetadata, QRErrorCorrectionLevel } from './qr'
 
 const TEST_CASES: string[] = ['https://gksander.com', 'Meow', '🐱']
 
+// TODO: test getQRMetadata function and
+
 describe('generate QR data that matches qrcode-generator', () => {
   for (const data of TEST_CASES) {
     for (const errorCorrectionLevel of [
@@ -28,7 +30,7 @@ describe('generate QR data that matches qrcode-generator', () => {
             }
           }
 
-          const { dimension, isFilled, isInFinderPattern } = generateQRData({
+          const { dimension, isFilled } = generateQRData({
             data,
             typeNumber,
             errorCorrectionLevel,

@@ -14,9 +14,11 @@ function App() {
   useEffect(() => {
     if (url && canvasRef.current) {
       try {
-        console.log(getQRMetadata({ data: url, errorCorrectionLevel: 'M' }))
-
-        const { dimension, isFilled, isInFinderPattern } = generateQRData({
+        const {
+          dimension,
+          isFilled,
+          isInPositionProbe: isInFinderPattern,
+        } = generateQRData({
           data: url,
           typeNumber: level,
           errorCorrectionLevel: 'L',
@@ -25,19 +27,9 @@ function App() {
         console.log(dimension)
 
         // // Generate QR code data
-        const qr = qrcode(level, 'M') // Error correction level M (Medium)
-        qr.addData(url)
-        qr.make()
-
-        const moduleCount = qr.getModuleCount()
-        const filledPattern: (1 | 0)[] = []
-        for (let row = 0; row < moduleCount; row++) {
-          for (let col = 0; col < moduleCount; col++) {
-            filledPattern.push(isFilled({ x: col, y: row }) ? 1 : 0)
-          }
-        }
-
-        console.log(filledPattern.join(''))
+        // const qr = qrcode(level, 'M') // Error correction level M (Medium)
+        // qr.addData(url)
+        // qr.make()
 
         // // Get the module count (QR code size)
         // const moduleCount = qr.getModuleCount()
@@ -58,9 +50,15 @@ function App() {
         ctx.fillRect(0, 0, size, size)
 
         // Draw QR code modules
-        ctx.fillStyle = '#000000'
         for (let row = 0; row < dimension; row++) {
           for (let col = 0; col < dimension; col++) {
+            ctx.fillStyle = '#000'
+
+            // Position probe
+            if (isInFinderPattern({ x: col, y: row })) {
+              ctx.fillStyle = '#f00'
+            }
+
             if (isFilled({ x: col, y: row })) {
               const x = col * scale + margin * scale
               const y = row * scale + margin * scale

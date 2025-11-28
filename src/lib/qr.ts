@@ -1003,7 +1003,7 @@ type Location = {
   y: number
 }
 
-type FinderPatternLocation = Location & {
+type PositionProbeLocation = Location & {
   size: number
 }
 
@@ -1054,10 +1054,10 @@ type QRData = {
   /**
    * Locations of finder patterns
    */
-  finderPatternLocations: {
-    topLeft: FinderPatternLocation
-    topRight: FinderPatternLocation
-    bottomLeft: FinderPatternLocation
+  positionProbeLocations: {
+    topLeft: PositionProbeLocation
+    topRight: PositionProbeLocation
+    bottomLeft: PositionProbeLocation
   }
 
   /**
@@ -1068,7 +1068,7 @@ type QRData = {
   /**
    * Is given location in a finder pattern?
    */
-  isInFinderPattern: (location: Location) => boolean
+  isInPositionProbe: (location: Location) => boolean
 }
 
 export function generateQRData({
@@ -1195,27 +1195,27 @@ export function generateQRData({
 
   // Create finder pattern locations
   const finderSize = 7
-  const finderPatternLocations = {
+  const positionProbeLocations = {
     topLeft: { x: 0, y: 0, size: finderSize },
     topRight: { x: moduleCount - finderSize, y: 0, size: finderSize },
     bottomLeft: { x: 0, y: moduleCount - finderSize, size: finderSize },
   }
 
   // Helper to check if location is in finder pattern
-  const isInFinderPattern = (location: Location): boolean => {
+  const isInPositionProbe = (location: Location): boolean => {
     const { x, y } = location
-    const finders = [
+    const positionProbes = [
       { x: 0, y: 0 },
       { x: moduleCount - 7, y: 0 },
       { x: 0, y: moduleCount - 7 },
     ]
 
-    for (const finder of finders) {
+    for (const probe of positionProbes) {
       if (
-        x >= finder.x - 1 &&
-        x < finder.x + 8 &&
-        y >= finder.y - 1 &&
-        y < finder.y + 8
+        x >= probe.x - 1 &&
+        x < probe.x + 8 &&
+        y >= probe.y - 1 &&
+        y < probe.y + 8
       ) {
         return true
       }
@@ -1225,7 +1225,7 @@ export function generateQRData({
 
   return {
     dimension: moduleCount,
-    finderPatternLocations,
+    positionProbeLocations: positionProbeLocations,
     isFilled: (location: Location) => {
       const { x, y } = location
       if (x < 0 || x >= moduleCount || y < 0 || y >= moduleCount) {
@@ -1233,7 +1233,7 @@ export function generateQRData({
       }
       return boolModules[y][x]
     },
-    isInFinderPattern,
+    isInPositionProbe,
   }
 }
 
