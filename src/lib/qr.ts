@@ -530,6 +530,11 @@ function createErrorCorrectionBytes(
 
     dcdata[r] = new Array(dcCount)
     for (let i = 0; i < dcdata[r].length; i++) {
+      if (i + offset >= dataBytes.length) {
+        throw new Error(
+          `Buffer overflow: trying to read byte ${i + offset} but buffer has only ${dataBytes.length} bytes`,
+        )
+      }
       dcdata[r][i] = 0xff & dataBytes[i + offset]
     }
     offset += dcCount
@@ -1145,7 +1150,14 @@ export function generateQRData({
   }
 
   // Create data bytes with error correction
-  const dataBytes = buffer.getBuffer()
+  // Extract exactly totalDataCount bytes from buffer
+  const bufferArray = buffer.getBuffer()
+  if (bufferArray.length < totalDataCount) {
+    throw new Error(
+      `Buffer too short: expected ${totalDataCount} bytes but got ${bufferArray.length}`,
+    )
+  }
+  const dataBytes = bufferArray.slice(0, totalDataCount)
   const finalBytes = createErrorCorrectionBytes(dataBytes, rsBlocks)
 
   // Setup patterns
