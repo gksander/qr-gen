@@ -18,21 +18,13 @@ function App() {
           dimension,
           isFilled,
           isInPositionProbe: isInFinderPattern,
+          getLocationType,
         } = generateQRData({
           data: url,
           typeNumber: level,
           errorCorrectionLevel: 'L',
         })
 
-        console.log(dimension)
-
-        // // Generate QR code data
-        // const qr = qrcode(level, 'M') // Error correction level M (Medium)
-        // qr.addData(url)
-        // qr.make()
-
-        // // Get the module count (QR code size)
-        // const moduleCount = qr.getModuleCount()
         const margin = 2
         const scale = 10 // pixels per module
         const size = dimension * scale + margin * 2 * scale
@@ -52,18 +44,28 @@ function App() {
         // Draw QR code modules
         for (let row = 0; row < dimension; row++) {
           for (let col = 0; col < dimension; col++) {
-            ctx.fillStyle = '#000'
+            const locationType = getLocationType({ x: col, y: row })
+            if (locationType === 'empty') continue
 
-            // Position probe
-            if (isInFinderPattern({ x: col, y: row })) {
+            if (locationType === 'data') {
+              ctx.fillStyle = '#000'
+            }
+            if (locationType === 'positionProbeOuter') {
               ctx.fillStyle = '#f00'
             }
-
-            if (isFilled({ x: col, y: row })) {
-              const x = col * scale + margin * scale
-              const y = row * scale + margin * scale
-              ctx.fillRect(x, y, scale, scale)
+            if (locationType === 'positionProbeInner') {
+              ctx.fillStyle = '#00f'
             }
+            if (locationType === 'alignmentPatternOuter') {
+              ctx.fillStyle = '#0f0'
+            }
+            if (locationType === 'alignmentPatternInner') {
+              ctx.fillStyle = '#f0f'
+            }
+
+            const x = col * scale + margin * scale
+            const y = row * scale + margin * scale
+            ctx.fillRect(x, y, scale, scale)
           }
         }
       } catch (err) {

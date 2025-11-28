@@ -1066,9 +1066,19 @@ type QRData = {
   isFilled: (location: Location) => boolean
 
   /**
-   * Is given location in a finder pattern?
+   * Is given location in a position probe
    */
   isInPositionProbe: (location: Location) => boolean
+
+  getLocationType: (
+    location: Location,
+  ) =>
+    | 'positionProbeOuter'
+    | 'positionProbeInner'
+    | 'alignmentPatternOuter'
+    | 'alignmentPatternInner'
+    | 'data'
+    | 'empty'
 }
 
 export function generateQRData({
@@ -1223,6 +1233,102 @@ export function generateQRData({
     return false
   }
 
+  // Get alignment pattern positions
+  // These are the positions where alignment patterns would be placed
+  // (they skip positions that overlap with position probes)
+  const alignmentPositions = getPatternPosition(typeNumber)
+  const alignmentPatternCenters: Location[] = []
+
+  // Position probe areas (7x7 patterns)
+  const positionProbeAreas = [
+    { xMin: 0, xMax: 6, yMin: 0, yMax: 6 }, // Top-left
+    { xMin: moduleCount - 7, xMax: moduleCount - 1, yMin: 0, yMax: 6 }, // Top-right
+    { xMin: 0, xMax: 6, yMin: moduleCount - 7, yMax: moduleCount - 1 }, // Bottom-left
+  ]
+
+  for (let i = 0; i < alignmentPositions.length; i++) {
+    for (let j = 0; j < alignmentPositions.length; j++) {
+      const row = alignmentPositions[i]
+      const col = alignmentPositions[j]
+
+      // Check if this center position is within any position probe area
+      // (The setup function checks modules[row][col] != null to skip overlaps)
+      let isOverlapping = false
+      for (const area of positionProbeAreas) {
+        if (
+          col >= area.xMin &&
+          col <= area.xMax &&
+          row >= area.yMin &&
+          row <= area.yMax
+        ) {
+          isOverlapping = true
+          break
+        }
+      }
+
+      if (!isOverlapping) {
+        alignmentPatternCenters.push({ x: col, y: row })
+      }
+    }
+  }
+
+  // Helper to check if location is in position probe and get type
+  const getPositionProbeType = (
+    location: Location,
+  ): 'positionProbeOuter' | 'positionProbeInner' | null => {
+    const { x, y } = location
+    const positionProbeOrigins = [
+      { x: 0, y: 0 }, // Top-left
+      { x: moduleCount - 7, y: 0 }, // Top-right
+      { x: 0, y: moduleCount - 7 }, // Bottom-left
+    ]
+
+    for (const origin of positionProbeOrigins) {
+      const relX = x - origin.x
+      const relY = y - origin.y
+
+      // Check if within 7x7 pattern (0-6 relative to origin)
+      if (relX >= 0 && relX <= 6 && relY >= 0 && relY <= 6) {
+        // Check if it's the inner 3x3 square (r=2-4, c=2-4)
+        if (relX >= 2 && relX <= 4 && relY >= 2 && relY <= 4) {
+          return 'positionProbeInner'
+        }
+        // Check if it's part of the outer border (r=0 or r=6 or c=0 or c=6)
+        if (relX === 0 || relX === 6 || relY === 0 || relY === 6) {
+          return 'positionProbeOuter'
+        }
+      }
+    }
+
+    return null
+  }
+
+  // Helper to check if location is in alignment pattern and get type
+  const getAlignmentPatternType = (
+    location: Location,
+  ): 'alignmentPatternOuter' | 'alignmentPatternInner' | null => {
+    const { x, y } = location
+
+    for (const center of alignmentPatternCenters) {
+      const relX = x - center.x
+      const relY = y - center.y
+
+      // Check if within 5x5 pattern
+      if (relX >= -2 && relX <= 2 && relY >= -2 && relY <= 2) {
+        // Check if it's the inner 1x1 square (center)
+        if (relX === 0 && relY === 0) {
+          return 'alignmentPatternInner'
+        }
+        // Check if it's the outer border (r === -2 || r === 2 || c === -2 || c === 2)
+        if (relX === -2 || relX === 2 || relY === -2 || relY === 2) {
+          return 'alignmentPatternOuter'
+        }
+      }
+    }
+
+    return null
+  }
+
   return {
     dimension: moduleCount,
     positionProbeLocations: positionProbeLocations,
@@ -1234,6 +1340,27 @@ export function generateQRData({
       return boolModules[y][x]
     },
     isInPositionProbe,
+    getLocationType: (location: Location) => {
+      const { x, y } = location
+      if (x < 0 || x >= moduleCount || y < 0 || y >= moduleCount) {
+        return 'empty'
+      }
+
+      // Check position probe first
+      const positionProbeType = getPositionProbeType(location)
+      if (positionProbeType) {
+        return positionProbeType
+      }
+
+      // Check alignment pattern
+      const alignmentPatternType = getAlignmentPatternType(location)
+      if (alignmentPatternType) {
+        return alignmentPatternType
+      }
+
+      // Otherwise it's data or empty
+      return boolModules[y][x] ? 'data' : 'empty'
+    },
   }
 }
 
