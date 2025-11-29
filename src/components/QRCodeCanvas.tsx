@@ -11,7 +11,11 @@ type Props = {
   errorCorrectionLevel: QRErrorCorrectionLevel
 }
 
-export function QRCode({ data, typeNumber, errorCorrectionLevel }: Props) {
+export function QRCodeCanvas({
+  data,
+  typeNumber,
+  errorCorrectionLevel,
+}: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {

@@ -1,9 +1,8 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useState, useRef, useEffect, useDeferredValue } from 'react'
-import qrcode from 'qrcode-generator'
+import { QRCodeCanvas } from '@/components/QRCodeCanvas'
+import { QRCodeSVG } from '@/components/QRCodeSVG'
 import { Input } from '@/components/ui/input'
-import { generateQRData, getQRMetadata } from '@/lib/qr'
-import { QRCode } from '@/components/QRCode'
+import { createFileRoute } from '@tanstack/react-router'
+import { useDeferredValue, useState } from 'react'
 
 export const Route = createFileRoute('/')({ component: App })
 
@@ -36,11 +35,20 @@ function App() {
         />
         {url && (
           <div className="flex justify-center">
-            <QRCode
-              data={deferredUrl}
-              typeNumber={deferredLevel}
-              errorCorrectionLevel="M"
-            />
+            <div className="flex-1">
+              <QRCodeCanvas
+                data={deferredUrl}
+                typeNumber={deferredLevel}
+                errorCorrectionLevel="M"
+              />
+            </div>
+            <div className="flex-1">
+              <QRCodeSVG
+                data={deferredUrl}
+                typeNumber={deferredLevel}
+                errorCorrectionLevel="M"
+              />
+            </div>
           </div>
         )}
       </div>
