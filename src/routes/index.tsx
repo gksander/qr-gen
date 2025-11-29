@@ -47,6 +47,7 @@ function App() {
                 data={deferredUrl}
                 typeNumber={deferredLevel}
                 errorCorrectionLevel="M"
+                logoColor="#ff0000"
               />
             </div>
           </div>
