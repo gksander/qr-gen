@@ -1,5 +1,12 @@
+import { Button } from '@/components/ui/button'
 import { getUser } from '@/functions/getUser'
-import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
+import { authClient } from '@/lib/auth-client'
+import {
+  createFileRoute,
+  Outlet,
+  redirect,
+  useNavigate,
+} from '@tanstack/react-router'
 
 export const Route = createFileRoute('/dashboard')({
   component: RouteComponent,
@@ -21,17 +28,32 @@ export const Route = createFileRoute('/dashboard')({
       })
     }
 
-    return { isAdmin: context.isAdmin || false }
+    return {
+      isAdmin: context.isAdmin || false,
+      name: context.session?.user?.name,
+    }
   },
 })
 
 function RouteComponent() {
-  const { isAdmin } = Route.useLoaderData()
+  const { isAdmin, name } = Route.useLoaderData()
+  const navigate = useNavigate()
 
   return (
     <div>
-      <h1>Dashboard</h1>
+      <h1>Dashboard {name}</h1>
       <div>Is admin? {isAdmin ? 'Yes' : 'No'}</div>
+      <Button
+        onClick={() =>
+          authClient.signOut({
+            fetchOptions: {
+              onSuccess: () => navigate({ to: '/' }),
+            },
+          })
+        }
+      >
+        Sign out
+      </Button>
       <Outlet />
     </div>
   )
