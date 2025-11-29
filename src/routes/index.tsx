@@ -17,7 +17,6 @@ const getPosts = createServerFn({
     console.log(posts)
     return posts
   } catch (error) {
-    console.error('Error fetching posts:', error)
     return []
   }
 })
@@ -28,7 +27,6 @@ export const Route = createFileRoute('/')({
     try {
       return await getPosts()
     } catch (error) {
-      console.error('Error loading posts:', error)
       return []
     }
   },
