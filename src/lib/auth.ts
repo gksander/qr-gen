@@ -11,5 +11,13 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: 'sqlite',
   }),
-  plugins: [admin(), tanstackStartCookies()], // Cookies should be last
+  plugins: [admin(), tanstackStartCookies()], // Cookies plugin should be last
+
+  advanced: {
+    defaultCookieAttributes: {
+      sameSite: 'none',
+      secure: true,
+      httpOnly: true,
+    },
+  },
 })
