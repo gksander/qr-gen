@@ -15,7 +15,7 @@ function App() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-8 gap-8">
-      <div className="w-full max-w-md space-y-4">
+      <div className="w-full max-w-3xl space-y-4">
         <h1 className="text-3xl font-bold text-center">QR Code Generator</h1>
         <Input
           type="url"

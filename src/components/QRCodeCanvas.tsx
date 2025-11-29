@@ -82,7 +82,7 @@ export function QRCodeCanvas({
   return (
     <canvas
       ref={canvasRef}
-      className="border rounded-lg p-4 bg-white w-100 h-100"
+      className="border rounded-lg p-4 bg-white w-full aspect-square"
     />
   )
 }
