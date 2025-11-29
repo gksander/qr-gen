@@ -21,7 +21,7 @@ export const Route = createFileRoute('/dashboard')({
       })
     }
 
-    return { isAdmin: context.isAdmin }
+    return { isAdmin: context.isAdmin || false }
   },
 })
 
