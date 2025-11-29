@@ -1,20 +1,17 @@
 import { QRCodeCanvas } from '@/components/QRCodeCanvas'
 import { QRCodeSVG } from '@/components/QRCodeSVG'
 import { Input } from '@/components/ui/input'
+import { db } from '@/db'
 import { postsTable } from '@/db/schema'
 import { createFileRoute } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { env } from 'cloudflare:workers'
-import { drizzle } from 'drizzle-orm/d1'
 import { useDeferredValue, useState } from 'react'
 
 const getPosts = createServerFn({
   method: 'GET',
 }).handler(async () => {
   try {
-    const db = drizzle(env.DB)
     const posts = await db.select().from(postsTable).limit(10)
-    console.log(posts)
     return posts
   } catch (error) {
     return []
@@ -94,7 +91,6 @@ function App() {
                 data={deferredUrl}
                 typeNumber={deferredLevel}
                 errorCorrectionLevel="M"
-                logoColor="#ff0000"
               />
             </div>
           </div>

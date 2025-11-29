@@ -2,11 +2,7 @@ import handler, { createServerEntry } from '@tanstack/react-start/server-entry'
 
 export default {
   ...createServerEntry({
-    fetch(request, env?: any) {
-      // Store the environment in the request for access in server functions
-      if (env) {
-        ;(request as any).env = env
-      }
+    fetch(request) {
       return handler.fetch(request)
     },
   }),

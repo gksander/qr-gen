@@ -8,6 +8,8 @@
   "vars": {
     "CLOUDFLARE_ACCOUNT_ID": "2c15de7d5998cfd689ed3c33aec3ea88",
     "CLOUDFLARE_DATABASE_ID": "52689e06-c602-4dfa-aad0-8d83e33f305a",
+    "BETTER_AUTH_URL": "http://localhost:3000",
+    "BETTER_AUTH_SECRET": "wE2Pgla3o8GiNZGhcWBSQBA9cGvpDaiv",
   },
   "d1_databases": [
     {

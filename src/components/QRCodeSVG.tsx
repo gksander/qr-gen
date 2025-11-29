@@ -11,20 +11,14 @@ type Props = {
   data: string
   typeNumber: QRTypeNumber
   errorCorrectionLevel: QRErrorCorrectionLevel
-  logoColor?: string
 }
 
-export function QRCodeSVG({
-  data,
-  typeNumber,
-  errorCorrectionLevel,
-  logoColor = '#000000',
-}: Props) {
+export function QRCodeSVG({ data, typeNumber, errorCorrectionLevel }: Props) {
   const [logoContent, setLogoContent] = useState<string>('')
 
   useEffect(() => {
     // Fetch and parse the logo SVG
-    fetch('/ramp-logo.svg')
+    fetch('/google.svg')
       .then((res) => res.text())
       .then((text) => {
         // Parse the SVG and modify paths to use the logo color
@@ -32,19 +26,14 @@ export function QRCodeSVG({
         const svgDoc = parser.parseFromString(text, 'image/svg+xml')
         const svgElement = svgDoc.documentElement
 
-        // Find all path elements and set their fill to the logo color
-        const paths = svgElement.querySelectorAll('path')
-        paths.forEach((path) => {
-          path.setAttribute('fill', logoColor)
-        })
-
         // Get the inner content (everything inside the root <svg> tag)
         setLogoContent(svgElement.innerHTML)
       })
       .catch((err) => {
         console.warn('Failed to load logo:', err)
       })
-  }, [logoColor])
+  }, [])
+
   const { positionProbePath, alignmentPatternPath, dataPath, size, logoArea } =
     useMemo(() => {
       try {
@@ -60,9 +49,9 @@ export function QRCodeSVG({
 
         // Logo dimensions and positioning
         // Logo viewBox is "0 0 281.9 75", so aspect ratio is ~3.76:1
-        const logoAspectRatio = 281.9 / 75
+        const logoAspectRatio = 1
         // Calculate logo size to fit nicely in the center (about 20% of QR code size)
-        const logoMaxWidth = size * 0.2
+        const logoMaxWidth = size * 0.1
         const logoWidth = logoMaxWidth
         const logoHeight = logoWidth / logoAspectRatio
         const logoX = (size - logoWidth) / 2
@@ -210,8 +199,8 @@ export function QRCodeSVG({
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 281.9 75"
-              width="281.9"
-              height="75"
+              width="200"
+              height="200"
             >
               <g dangerouslySetInnerHTML={{ __html: logoContent }} />
             </svg>
