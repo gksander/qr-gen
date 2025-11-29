@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "qrgen",
+  "compatibility_date": "2025-09-02",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "src/server.ts",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "qrgen-db",
+      "database_id": "94ccdc3d-dad6-4155-b1ef-016478696e8c",
+      "migrations_dir": "drizzle",
+    },
+  ],
+}

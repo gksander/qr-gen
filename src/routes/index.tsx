@@ -1,22 +1,73 @@
 import { QRCodeCanvas } from '@/components/QRCodeCanvas'
 import { QRCodeSVG } from '@/components/QRCodeSVG'
 import { Input } from '@/components/ui/input'
+import { postsTable } from '@/db/schema'
 import { createFileRoute } from '@tanstack/react-router'
+import { createServerFn } from '@tanstack/react-start'
+import { env } from 'cloudflare:workers'
+import { drizzle } from 'drizzle-orm/d1'
 import { useDeferredValue, useState } from 'react'
 
-export const Route = createFileRoute('/')({ component: App })
+const getPosts = createServerFn({
+  method: 'GET',
+}).handler(async () => {
+  try {
+    const db = drizzle(env.DB)
+    const posts = await db.select().from(postsTable).limit(10)
+    console.log(posts)
+    return posts
+  } catch (error) {
+    console.error('Error fetching posts:', error)
+    return []
+  }
+})
+
+export const Route = createFileRoute('/')({
+  component: App,
+  loader: async () => {
+    try {
+      return await getPosts()
+    } catch (error) {
+      console.error('Error loading posts:', error)
+      return []
+    }
+  },
+})
 
 function App() {
   const [url, setUrl] = useState('https://gksander.com')
-  const [level, setLevel] = useState<TypeNumber>(0)
+  const [level, setLevel] = useState<TypeNumber>(3)
+  const posts = Route.useLoaderData()
 
   const deferredUrl = useDeferredValue(url)
   const deferredLevel = useDeferredValue(level)
+
+  console.log(posts)
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-8 gap-8">
       <div className="w-full max-w-3xl space-y-4">
         <h1 className="text-3xl font-bold text-center">QR Code Generator</h1>
+        {posts && posts.length > 0 && (
+          <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
+            <h2 className="text-xl font-semibold mb-2">Posts from Database:</h2>
+            <ul className="space-y-2">
+              {posts.map((post: any) => (
+                <li key={post.id} className="border-b pb-2">
+                  <h3 className="font-medium">{post.title}</h3>
+                  {post.content && (
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {post.content}
+                    </p>
+                  )}
+                  <p className="text-xs text-gray-500">
+                    Published: {post.published ? 'Yes' : 'No'}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
         <Input
           type="url"
           placeholder="Enter a web URL..."

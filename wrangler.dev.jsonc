@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "qrgen",
+  "compatibility_date": "2025-09-02",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "src/server.ts",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "qrgen-db-dev",
+      "database_id": "52689e06-c602-4dfa-aad0-8d83e33f305a",
+      "migrations_dir": "drizzle",
+      "remote": true,
+    },
+  ],
+  // This config is used when running `pnpm dev` (vite dev)
+}
