@@ -40,8 +40,6 @@ function App() {
   const deferredUrl = useDeferredValue(url)
   const deferredLevel = useDeferredValue(level)
 
-  console.log(posts)
-
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-8 gap-8">
       <div className="w-full max-w-3xl space-y-4">
