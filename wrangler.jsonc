@@ -5,6 +5,10 @@
   "compatibility_flags": ["nodejs_compat"],
   "main": "src/server.ts",
   "keep_vars": true,
+  "vars": {
+    "CLOUDFLARE_ACCOUNT_ID": "2c15de7d5998cfd689ed3c33aec3ea88",
+    "CLOUDFLARE_DATABASE_ID": "94ccdc3d-dad6-4155-b1ef-016478696e8c", // keep in sync with d1 database id below
+  },
   "d1_databases": [
     {
       "binding": "DB",

@@ -4,6 +4,11 @@
   "compatibility_date": "2025-09-02",
   "compatibility_flags": ["nodejs_compat"],
   "main": "src/server.ts",
+  "keep_vars": true,
+  "vars": {
+    "CLOUDFLARE_ACCOUNT_ID": "2c15de7d5998cfd689ed3c33aec3ea88",
+    "CLOUDFLARE_DATABASE_ID": "52689e06-c602-4dfa-aad0-8d83e33f305a",
+  },
   "d1_databases": [
     {
       "binding": "DB",
