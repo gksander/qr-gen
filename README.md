@@ -8,3 +8,7 @@
   - [ ] Stats / views
   - [ ] Admin section: Users
   - [ ] Admin section: usage stats
+
+## Features TODO:
+
+- [ ]
