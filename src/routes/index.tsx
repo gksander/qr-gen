@@ -3,7 +3,7 @@ import { QRCodeSVG } from '@/components/QRCodeSVG'
 import { Input } from '@/components/ui/input'
 import { db } from '@/db'
 import { postsTable } from '@/db/schema'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { useDeferredValue, useState } from 'react'
 
@@ -41,6 +41,15 @@ function App() {
     <div className="flex flex-col items-center justify-center min-h-screen p-8 gap-8">
       <div className="w-full max-w-3xl space-y-4">
         <h1 className="text-3xl font-bold text-center">QR Code Generator</h1>
+
+        <div className="my-4">
+          <Link to="/build">Build your own QR Code</Link>
+        </div>
+
+        <div className="my-4">
+          <Link to="/dashboard">Go to dashboard</Link>
+        </div>
+
         {posts && posts.length > 0 && (
           <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
             <h2 className="text-xl font-semibold mb-2">Posts from Database:</h2>

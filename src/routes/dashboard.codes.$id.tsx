@@ -1,10 +1,9 @@
-import { createFileRoute, Link, notFound, Outlet } from '@tanstack/react-router'
-import { createServerFn } from '@tanstack/react-start'
 import { db } from '@/db'
 import { qrCodesTable } from '@/db/schema'
 import { authMiddleware } from '@/middleware/authMiddleware'
-import { eq, and } from 'drizzle-orm'
-import { QRCodeSVG } from '@/components/QRCodeSVG'
+import { createFileRoute, notFound, Outlet } from '@tanstack/react-router'
+import { createServerFn } from '@tanstack/react-start'
+import { and, eq } from 'drizzle-orm'
 import { z } from 'zod'
 
 const getQRCode = createServerFn({
