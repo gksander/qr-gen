@@ -29,6 +29,13 @@
       "when": 1764471421454,
       "tag": "0003_closed_smasher",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1764528404568,
+      "tag": "0004_great_sway",
+      "breakpoints": true
     }
   ]
 }

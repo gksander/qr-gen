@@ -43,8 +43,11 @@ const createQRCode = createServerFn({
     })
   })
 
-export const Route = createFileRoute('/dashboard/codes/new')({
+export const Route = createFileRoute('/dashboard/new-code')({
   component: RouteComponent,
+  beforeLoad: async () => {
+    return { title: 'New QR Code' }
+  },
 })
 
 function RouteComponent() {

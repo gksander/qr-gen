@@ -1,5 +1,4 @@
-import { Link, useLocation, useNavigate } from '@tanstack/react-router'
-import { QrCode, List, Users, BarChart3, LogOut } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import {
   Sidebar,
   SidebarContent,
@@ -13,8 +12,9 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from '@/components/ui/sidebar'
-import { Button } from '@/components/ui/button'
 import { authClient } from '@/lib/auth-client'
+import { Link, useNavigate } from '@tanstack/react-router'
+import { BarChart3, List, LogOut, QrCode, Users } from 'lucide-react'
 
 interface DashboardSidebarProps {
   isAdmin: boolean
@@ -53,7 +53,7 @@ export function DashboardSidebar({ isAdmin, userName }: DashboardSidebarProps) {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
                   <Link
-                    to="/dashboard/codes/new"
+                    to="/dashboard/new-code"
                     activeOptions={{ exact: true }}
                     activeProps={{ 'data-active': true }}
                   >
@@ -66,7 +66,7 @@ export function DashboardSidebar({ isAdmin, userName }: DashboardSidebarProps) {
                 <SidebarMenuButton asChild>
                   <Link
                     to="/dashboard/codes"
-                    activeOptions={{ exact: true }}
+                    activeOptions={{ exact: false }}
                     activeProps={{ 'data-active': true }}
                   >
                     <List className="size-4" />

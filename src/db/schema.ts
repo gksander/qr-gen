@@ -35,6 +35,11 @@ export const qrCodesTable = sqliteTable('qr_codes', {
     .references(() => user.id, { onDelete: 'cascade' }),
 
   /**
+   * Internally-referenced title of the QR code
+   */
+  title: text('title').notNull().default('Untitled'),
+
+  /**
    * Type of the QR Code, e.g.
    * - `static` for a (free) static URL QR Code
    * - `url` for a dynamic URL QR Code

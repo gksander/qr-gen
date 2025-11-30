@@ -1,0 +1,1 @@
+ALTER TABLE `qr_codes` ADD `title` text DEFAULT 'Untitled' NOT NULL;

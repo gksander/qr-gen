@@ -14,13 +14,16 @@ import { Route as SeedRouteImport } from './routes/seed'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
+import { Route as DashboardNewCodeRouteImport } from './routes/dashboard.new-code'
+import { Route as DashboardCodesRouteImport } from './routes/dashboard.codes'
 import { Route as CIdRouteImport } from './routes/c.$id'
 import { Route as DashboardCodesIndexRouteImport } from './routes/dashboard.codes.index'
-import { Route as DashboardCodesNewRouteImport } from './routes/dashboard.codes.new'
 import { Route as DashboardCodesIdRouteImport } from './routes/dashboard.codes.$id'
 import { Route as DashboardAdminUsersRouteImport } from './routes/dashboard.admin.users'
 import { Route as DashboardAdminStatsRouteImport } from './routes/dashboard.admin.stats'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as DashboardCodesIdIndexRouteImport } from './routes/dashboard.codes.$id.index'
+import { Route as DashboardCodesIdEditRouteImport } from './routes/dashboard.codes.$id.edit'
 
 const SignInRoute = SignInRouteImport.update({
   id: '/sign-in',
@@ -47,25 +50,30 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   path: '/',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardNewCodeRoute = DashboardNewCodeRouteImport.update({
+  id: '/new-code',
+  path: '/new-code',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardCodesRoute = DashboardCodesRouteImport.update({
+  id: '/codes',
+  path: '/codes',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const CIdRoute = CIdRouteImport.update({
   id: '/c/$id',
   path: '/c/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardCodesIndexRoute = DashboardCodesIndexRouteImport.update({
-  id: '/codes/',
-  path: '/codes/',
-  getParentRoute: () => DashboardRoute,
-} as any)
-const DashboardCodesNewRoute = DashboardCodesNewRouteImport.update({
-  id: '/codes/new',
-  path: '/codes/new',
-  getParentRoute: () => DashboardRoute,
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardCodesRoute,
 } as any)
 const DashboardCodesIdRoute = DashboardCodesIdRouteImport.update({
-  id: '/codes/$id',
-  path: '/codes/$id',
-  getParentRoute: () => DashboardRoute,
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => DashboardCodesRoute,
 } as any)
 const DashboardAdminUsersRoute = DashboardAdminUsersRouteImport.update({
   id: '/admin/users',
@@ -82,6 +90,16 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardCodesIdIndexRoute = DashboardCodesIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardCodesIdRoute,
+} as any)
+const DashboardCodesIdEditRoute = DashboardCodesIdEditRouteImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => DashboardCodesIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -89,26 +107,30 @@ export interface FileRoutesByFullPath {
   '/seed': typeof SeedRoute
   '/sign-in': typeof SignInRoute
   '/c/$id': typeof CIdRoute
+  '/dashboard/codes': typeof DashboardCodesRouteWithChildren
+  '/dashboard/new-code': typeof DashboardNewCodeRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/dashboard/admin/stats': typeof DashboardAdminStatsRoute
   '/dashboard/admin/users': typeof DashboardAdminUsersRoute
-  '/dashboard/codes/$id': typeof DashboardCodesIdRoute
-  '/dashboard/codes/new': typeof DashboardCodesNewRoute
-  '/dashboard/codes': typeof DashboardCodesIndexRoute
+  '/dashboard/codes/$id': typeof DashboardCodesIdRouteWithChildren
+  '/dashboard/codes/': typeof DashboardCodesIndexRoute
+  '/dashboard/codes/$id/edit': typeof DashboardCodesIdEditRoute
+  '/dashboard/codes/$id/': typeof DashboardCodesIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/seed': typeof SeedRoute
   '/sign-in': typeof SignInRoute
   '/c/$id': typeof CIdRoute
+  '/dashboard/new-code': typeof DashboardNewCodeRoute
   '/dashboard': typeof DashboardIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/dashboard/admin/stats': typeof DashboardAdminStatsRoute
   '/dashboard/admin/users': typeof DashboardAdminUsersRoute
-  '/dashboard/codes/$id': typeof DashboardCodesIdRoute
-  '/dashboard/codes/new': typeof DashboardCodesNewRoute
   '/dashboard/codes': typeof DashboardCodesIndexRoute
+  '/dashboard/codes/$id/edit': typeof DashboardCodesIdEditRoute
+  '/dashboard/codes/$id': typeof DashboardCodesIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -117,13 +139,16 @@ export interface FileRoutesById {
   '/seed': typeof SeedRoute
   '/sign-in': typeof SignInRoute
   '/c/$id': typeof CIdRoute
+  '/dashboard/codes': typeof DashboardCodesRouteWithChildren
+  '/dashboard/new-code': typeof DashboardNewCodeRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/dashboard/admin/stats': typeof DashboardAdminStatsRoute
   '/dashboard/admin/users': typeof DashboardAdminUsersRoute
-  '/dashboard/codes/$id': typeof DashboardCodesIdRoute
-  '/dashboard/codes/new': typeof DashboardCodesNewRoute
+  '/dashboard/codes/$id': typeof DashboardCodesIdRouteWithChildren
   '/dashboard/codes/': typeof DashboardCodesIndexRoute
+  '/dashboard/codes/$id/edit': typeof DashboardCodesIdEditRoute
+  '/dashboard/codes/$id/': typeof DashboardCodesIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -133,26 +158,30 @@ export interface FileRouteTypes {
     | '/seed'
     | '/sign-in'
     | '/c/$id'
+    | '/dashboard/codes'
+    | '/dashboard/new-code'
     | '/dashboard/'
     | '/api/auth/$'
     | '/dashboard/admin/stats'
     | '/dashboard/admin/users'
     | '/dashboard/codes/$id'
-    | '/dashboard/codes/new'
-    | '/dashboard/codes'
+    | '/dashboard/codes/'
+    | '/dashboard/codes/$id/edit'
+    | '/dashboard/codes/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/seed'
     | '/sign-in'
     | '/c/$id'
+    | '/dashboard/new-code'
     | '/dashboard'
     | '/api/auth/$'
     | '/dashboard/admin/stats'
     | '/dashboard/admin/users'
-    | '/dashboard/codes/$id'
-    | '/dashboard/codes/new'
     | '/dashboard/codes'
+    | '/dashboard/codes/$id/edit'
+    | '/dashboard/codes/$id'
   id:
     | '__root__'
     | '/'
@@ -160,13 +189,16 @@ export interface FileRouteTypes {
     | '/seed'
     | '/sign-in'
     | '/c/$id'
+    | '/dashboard/codes'
+    | '/dashboard/new-code'
     | '/dashboard/'
     | '/api/auth/$'
     | '/dashboard/admin/stats'
     | '/dashboard/admin/users'
     | '/dashboard/codes/$id'
-    | '/dashboard/codes/new'
     | '/dashboard/codes/'
+    | '/dashboard/codes/$id/edit'
+    | '/dashboard/codes/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -215,6 +247,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/new-code': {
+      id: '/dashboard/new-code'
+      path: '/new-code'
+      fullPath: '/dashboard/new-code'
+      preLoaderRoute: typeof DashboardNewCodeRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/codes': {
+      id: '/dashboard/codes'
+      path: '/codes'
+      fullPath: '/dashboard/codes'
+      preLoaderRoute: typeof DashboardCodesRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/c/$id': {
       id: '/c/$id'
       path: '/c/$id'
@@ -224,24 +270,17 @@ declare module '@tanstack/react-router' {
     }
     '/dashboard/codes/': {
       id: '/dashboard/codes/'
-      path: '/codes'
-      fullPath: '/dashboard/codes'
+      path: '/'
+      fullPath: '/dashboard/codes/'
       preLoaderRoute: typeof DashboardCodesIndexRouteImport
-      parentRoute: typeof DashboardRoute
-    }
-    '/dashboard/codes/new': {
-      id: '/dashboard/codes/new'
-      path: '/codes/new'
-      fullPath: '/dashboard/codes/new'
-      preLoaderRoute: typeof DashboardCodesNewRouteImport
-      parentRoute: typeof DashboardRoute
+      parentRoute: typeof DashboardCodesRoute
     }
     '/dashboard/codes/$id': {
       id: '/dashboard/codes/$id'
-      path: '/codes/$id'
+      path: '/$id'
       fullPath: '/dashboard/codes/$id'
       preLoaderRoute: typeof DashboardCodesIdRouteImport
-      parentRoute: typeof DashboardRoute
+      parentRoute: typeof DashboardCodesRoute
     }
     '/dashboard/admin/users': {
       id: '/dashboard/admin/users'
@@ -264,25 +303,64 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/codes/$id/': {
+      id: '/dashboard/codes/$id/'
+      path: '/'
+      fullPath: '/dashboard/codes/$id/'
+      preLoaderRoute: typeof DashboardCodesIdIndexRouteImport
+      parentRoute: typeof DashboardCodesIdRoute
+    }
+    '/dashboard/codes/$id/edit': {
+      id: '/dashboard/codes/$id/edit'
+      path: '/edit'
+      fullPath: '/dashboard/codes/$id/edit'
+      preLoaderRoute: typeof DashboardCodesIdEditRouteImport
+      parentRoute: typeof DashboardCodesIdRoute
+    }
   }
 }
 
-interface DashboardRouteChildren {
-  DashboardIndexRoute: typeof DashboardIndexRoute
-  DashboardAdminStatsRoute: typeof DashboardAdminStatsRoute
-  DashboardAdminUsersRoute: typeof DashboardAdminUsersRoute
-  DashboardCodesIdRoute: typeof DashboardCodesIdRoute
-  DashboardCodesNewRoute: typeof DashboardCodesNewRoute
+interface DashboardCodesIdRouteChildren {
+  DashboardCodesIdEditRoute: typeof DashboardCodesIdEditRoute
+  DashboardCodesIdIndexRoute: typeof DashboardCodesIdIndexRoute
+}
+
+const DashboardCodesIdRouteChildren: DashboardCodesIdRouteChildren = {
+  DashboardCodesIdEditRoute: DashboardCodesIdEditRoute,
+  DashboardCodesIdIndexRoute: DashboardCodesIdIndexRoute,
+}
+
+const DashboardCodesIdRouteWithChildren =
+  DashboardCodesIdRoute._addFileChildren(DashboardCodesIdRouteChildren)
+
+interface DashboardCodesRouteChildren {
+  DashboardCodesIdRoute: typeof DashboardCodesIdRouteWithChildren
   DashboardCodesIndexRoute: typeof DashboardCodesIndexRoute
 }
 
+const DashboardCodesRouteChildren: DashboardCodesRouteChildren = {
+  DashboardCodesIdRoute: DashboardCodesIdRouteWithChildren,
+  DashboardCodesIndexRoute: DashboardCodesIndexRoute,
+}
+
+const DashboardCodesRouteWithChildren = DashboardCodesRoute._addFileChildren(
+  DashboardCodesRouteChildren,
+)
+
+interface DashboardRouteChildren {
+  DashboardCodesRoute: typeof DashboardCodesRouteWithChildren
+  DashboardNewCodeRoute: typeof DashboardNewCodeRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
+  DashboardAdminStatsRoute: typeof DashboardAdminStatsRoute
+  DashboardAdminUsersRoute: typeof DashboardAdminUsersRoute
+}
+
 const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardCodesRoute: DashboardCodesRouteWithChildren,
+  DashboardNewCodeRoute: DashboardNewCodeRoute,
   DashboardIndexRoute: DashboardIndexRoute,
   DashboardAdminStatsRoute: DashboardAdminStatsRoute,
   DashboardAdminUsersRoute: DashboardAdminUsersRoute,
-  DashboardCodesIdRoute: DashboardCodesIdRoute,
-  DashboardCodesNewRoute: DashboardCodesNewRoute,
-  DashboardCodesIndexRoute: DashboardCodesIndexRoute,
 }
 
 const DashboardRouteWithChildren = DashboardRoute._addFileChildren(

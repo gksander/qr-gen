@@ -47,10 +47,11 @@ function RouteComponent() {
               to="/dashboard/codes/$id"
               params={{ id: code.id }}
               className="block p-4 border rounded-lg hover:bg-accent transition-colors"
+              preload="viewport"
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="font-medium">{code.type}</div>
+                  <div className="font-medium">{code.title}</div>
                   <div className="text-sm text-muted-foreground truncate max-w-md">
                     {code.data}
                   </div>
