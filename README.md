@@ -12,4 +12,4 @@
 
 ## Features TODO:
 
-- [ ]
+- [ ] QR detail/edit page:

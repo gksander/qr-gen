@@ -22,7 +22,6 @@ interface DashboardSidebarProps {
 }
 
 export function DashboardSidebar({ isAdmin, userName }: DashboardSidebarProps) {
-  const location = useLocation()
   const navigate = useNavigate()
 
   const handleSignOut = () => {
@@ -34,7 +33,7 @@ export function DashboardSidebar({ isAdmin, userName }: DashboardSidebarProps) {
   }
 
   return (
-    <Sidebar>
+    <Sidebar variant="inset">
       <SidebarHeader>
         <div className="flex items-center gap-2 px-2 py-1.5">
           <QrCode className="size-5" />
