@@ -1,10 +1,57 @@
 import { relations, sql } from 'drizzle-orm'
 import { index, int, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
+/**
+ * Trash sample
+ */
 export const postsTable = sqliteTable('posts', {
   id: int().primaryKey({ autoIncrement: true }),
   title: text().notNull(),
   content: text().notNull(),
+})
+
+/**
+ * QR Codes
+ */
+export const qrCodesTable = sqliteTable('qr_codes', {
+  id: text('id').primaryKey(),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' })
+    .default(
+      sql`(cast(unixepoch('subsecond') * 1000 as integer))` as unknown as Date,
+    )
+    .notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp_ms' })
+    .default(
+      sql`(cast(unixepoch('subsecond') * 1000 as integer))` as unknown as Date,
+    )
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull(),
+
+  /**
+   * Owner of the QR Code
+   */
+  userId: text('user_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+
+  /**
+   * Type of the QR Code, e.g.
+   * - `static` for a (free) static URL QR Code
+   * - `url` for a dynamic URL QR Code
+   */
+  type: text({ enum: ['static', 'url'] })
+    .notNull()
+    .default('static'),
+
+  /**
+   * JSON blob of the QR Code visual configuration
+   */
+  qrConfig: text('qr_config', { mode: 'json' }).notNull().default('{}'),
+
+  /**
+   * Data encoded in the QR Code (e.g. a URL)
+   */
+  data: text('data').notNull().default(''),
 })
 
 /**
