@@ -46,7 +46,7 @@ export const qrCodesTable = sqliteTable('qr_codes', {
   /**
    * JSON blob of the QR Code visual configuration
    */
-  qrConfig: text('qr_config', { mode: 'json' }).notNull().default('{}'),
+  qrConfig: text('qr_config').notNull().default('{}'),
 
   /**
    * Data encoded in the QR Code (e.g. a URL)

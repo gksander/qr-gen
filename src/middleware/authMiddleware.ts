@@ -6,8 +6,11 @@ export const authMiddleware = createMiddleware().server(
     const session = await auth.api.getSession({
       headers: request.headers,
     })
+
+    const currentUserId = session?.user?.id
+
     return next({
-      context: { session },
+      context: { session, currentUserId },
     })
   },
 )
