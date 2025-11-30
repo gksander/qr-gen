@@ -34,7 +34,7 @@ const createQRCode = createServerFn({
       userId: session.user.id,
       type: 'url',
       data: data.url,
-      qrConfig: {},
+      qrConfig: JSON.stringify({}),
     })
 
     // TODO: throwing redirect doesn't actually work
