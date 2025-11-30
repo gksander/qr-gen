@@ -14,6 +14,10 @@ import { Route as SeedRouteImport } from './routes/seed'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
+import { Route as DashboardCodesIndexRouteImport } from './routes/dashboard.codes.index'
+import { Route as DashboardCodesNewRouteImport } from './routes/dashboard.codes.new'
+import { Route as DashboardAdminUsersRouteImport } from './routes/dashboard.admin.users'
+import { Route as DashboardAdminStatsRouteImport } from './routes/dashboard.admin.stats'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
 const SignInRoute = SignInRouteImport.update({
@@ -41,6 +45,26 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   path: '/',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardCodesIndexRoute = DashboardCodesIndexRouteImport.update({
+  id: '/codes/',
+  path: '/codes/',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardCodesNewRoute = DashboardCodesNewRouteImport.update({
+  id: '/codes/new',
+  path: '/codes/new',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardAdminUsersRoute = DashboardAdminUsersRouteImport.update({
+  id: '/admin/users',
+  path: '/admin/users',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardAdminStatsRoute = DashboardAdminStatsRouteImport.update({
+  id: '/admin/stats',
+  path: '/admin/stats',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -54,6 +78,10 @@ export interface FileRoutesByFullPath {
   '/sign-in': typeof SignInRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/dashboard/admin/stats': typeof DashboardAdminStatsRoute
+  '/dashboard/admin/users': typeof DashboardAdminUsersRoute
+  '/dashboard/codes/new': typeof DashboardCodesNewRoute
+  '/dashboard/codes': typeof DashboardCodesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -61,6 +89,10 @@ export interface FileRoutesByTo {
   '/sign-in': typeof SignInRoute
   '/dashboard': typeof DashboardIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/dashboard/admin/stats': typeof DashboardAdminStatsRoute
+  '/dashboard/admin/users': typeof DashboardAdminUsersRoute
+  '/dashboard/codes/new': typeof DashboardCodesNewRoute
+  '/dashboard/codes': typeof DashboardCodesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -70,6 +102,10 @@ export interface FileRoutesById {
   '/sign-in': typeof SignInRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/dashboard/admin/stats': typeof DashboardAdminStatsRoute
+  '/dashboard/admin/users': typeof DashboardAdminUsersRoute
+  '/dashboard/codes/new': typeof DashboardCodesNewRoute
+  '/dashboard/codes/': typeof DashboardCodesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -80,8 +116,21 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/dashboard/'
     | '/api/auth/$'
+    | '/dashboard/admin/stats'
+    | '/dashboard/admin/users'
+    | '/dashboard/codes/new'
+    | '/dashboard/codes'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/seed' | '/sign-in' | '/dashboard' | '/api/auth/$'
+  to:
+    | '/'
+    | '/seed'
+    | '/sign-in'
+    | '/dashboard'
+    | '/api/auth/$'
+    | '/dashboard/admin/stats'
+    | '/dashboard/admin/users'
+    | '/dashboard/codes/new'
+    | '/dashboard/codes'
   id:
     | '__root__'
     | '/'
@@ -90,6 +139,10 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/dashboard/'
     | '/api/auth/$'
+    | '/dashboard/admin/stats'
+    | '/dashboard/admin/users'
+    | '/dashboard/codes/new'
+    | '/dashboard/codes/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -137,6 +190,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/codes/': {
+      id: '/dashboard/codes/'
+      path: '/codes'
+      fullPath: '/dashboard/codes'
+      preLoaderRoute: typeof DashboardCodesIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/codes/new': {
+      id: '/dashboard/codes/new'
+      path: '/codes/new'
+      fullPath: '/dashboard/codes/new'
+      preLoaderRoute: typeof DashboardCodesNewRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/admin/users': {
+      id: '/dashboard/admin/users'
+      path: '/admin/users'
+      fullPath: '/dashboard/admin/users'
+      preLoaderRoute: typeof DashboardAdminUsersRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/admin/stats': {
+      id: '/dashboard/admin/stats'
+      path: '/admin/stats'
+      fullPath: '/dashboard/admin/stats'
+      preLoaderRoute: typeof DashboardAdminStatsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -149,10 +230,18 @@ declare module '@tanstack/react-router' {
 
 interface DashboardRouteChildren {
   DashboardIndexRoute: typeof DashboardIndexRoute
+  DashboardAdminStatsRoute: typeof DashboardAdminStatsRoute
+  DashboardAdminUsersRoute: typeof DashboardAdminUsersRoute
+  DashboardCodesNewRoute: typeof DashboardCodesNewRoute
+  DashboardCodesIndexRoute: typeof DashboardCodesIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardIndexRoute: DashboardIndexRoute,
+  DashboardAdminStatsRoute: DashboardAdminStatsRoute,
+  DashboardAdminUsersRoute: DashboardAdminUsersRoute,
+  DashboardCodesNewRoute: DashboardCodesNewRoute,
+  DashboardCodesIndexRoute: DashboardCodesIndexRoute,
 }
 
 const DashboardRouteWithChildren = DashboardRoute._addFileChildren(

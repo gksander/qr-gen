@@ -1,12 +1,12 @@
-import { Button } from '@/components/ui/button'
 import { getUser } from '@/functions/getUser'
-import { authClient } from '@/lib/auth-client'
+import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
 import {
-  createFileRoute,
-  Outlet,
-  redirect,
-  useNavigate,
-} from '@tanstack/react-router'
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from '@/components/ui/sidebar'
+import { Separator } from '@/components/ui/separator'
+import { DashboardSidebar } from '@/components/DashboardSidebar'
 
 export const Route = createFileRoute('/dashboard')({
   component: RouteComponent,
@@ -37,24 +37,25 @@ export const Route = createFileRoute('/dashboard')({
 
 function RouteComponent() {
   const { isAdmin, name } = Route.useLoaderData()
-  const navigate = useNavigate()
 
   return (
-    <div>
-      <h1>Dashboard {name}</h1>
-      <div>Is admin? {isAdmin ? 'Yes' : 'No'}</div>
-      <Button
-        onClick={() =>
-          authClient.signOut({
-            fetchOptions: {
-              onSuccess: () => navigate({ to: '/' }),
-            },
-          })
-        }
-      >
-        Sign out
-      </Button>
-      <Outlet />
-    </div>
+    <SidebarProvider>
+      <DashboardSidebar isAdmin={isAdmin} userName={name} />
+      <SidebarInset>
+        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+          <SidebarTrigger className="-ml-1" />
+          <Separator
+            orientation="vertical"
+            className="mr-2 data-[orientation=vertical]:h-4"
+          />
+          <div className="flex items-center gap-2">
+            <h1 className="text-lg font-semibold">Dashboard</h1>
+          </div>
+        </header>
+        <div className="flex flex-1 flex-col gap-4 p-4">
+          <Outlet />
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
   )
 }
