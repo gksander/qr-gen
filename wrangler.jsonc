@@ -10,12 +10,20 @@
     "CLOUDFLARE_DATABASE_ID": "94ccdc3d-dad6-4155-b1ef-016478696e8c", // keep in sync with d1 database id below
     "BETTER_AUTH_URL": "https://qrgen.gksander93.workers.dev/", // will need to change to production url soon
   },
+
   "d1_databases": [
     {
       "binding": "DB",
       "database_name": "qrgen-db",
       "database_id": "94ccdc3d-dad6-4155-b1ef-016478696e8c",
       "migrations_dir": "drizzle",
+    },
+  ],
+
+  "kv_namespaces": [
+    {
+      "binding": "KV",
+      "id": "3ba6d9b7061740d99cbcfc96f09f620f",
     },
   ],
 

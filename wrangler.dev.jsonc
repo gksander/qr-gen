@@ -20,5 +20,10 @@
       "remote": true,
     },
   ],
-  // This config is used when running `pnpm dev` (vite dev)
+  "kv_namespaces": [
+    {
+      "binding": "KV",
+      "id": "3ba6d9b7061740d99cbcfc96f09f620f",
+    },
+  ],
 }
