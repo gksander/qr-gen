@@ -1,6 +1,8 @@
 import { QRCodeDetailLayout } from '@/components/QRCodeDetailLayout'
-import { QRCodeSVG } from '@/components/QRCodeSVG'
+import { TEMPLATES } from '@/lib/qrConfiguration/templates/template'
+import { parseQRConfig } from '@/lib/qrConfiguration/configuration'
 import { createFileRoute, Link, useLoaderData } from '@tanstack/react-router'
+import { useMemo } from 'react'
 
 export const Route = createFileRoute('/dashboard/codes/$id/')({
   component: RouteComponent,
@@ -8,6 +10,22 @@ export const Route = createFileRoute('/dashboard/codes/$id/')({
 
 function RouteComponent() {
   const { code } = useLoaderData({ from: '/dashboard/codes/$id' })
+
+  // Parse and validate qrConfig from database
+  const qrConfig = useMemo(() => parseQRConfig(code.qrConfig), [code.qrConfig])
+
+  const activeTemplate = TEMPLATES[qrConfig.template]
+
+  // Type-safe control values for the Component
+  const typedControlValues = useMemo(() => {
+    const typed: Record<string, unknown> = {}
+    Object.entries(activeTemplate.controls).forEach(([key, control]) => {
+      typed[key] = qrConfig.controlValues[key] ?? control.defaultValue
+    })
+    return typed as {
+      [K in keyof typeof activeTemplate.controls]: (typeof activeTemplate.controls)[K]['defaultValue']
+    }
+  }, [activeTemplate, qrConfig.controlValues])
 
   return (
     <QRCodeDetailLayout
@@ -48,7 +66,10 @@ function RouteComponent() {
         </div>
       }
       rightContent={
-        <QRCodeSVG data={code.data} typeNumber={3} errorCorrectionLevel="M" />
+        <activeTemplate.Component
+          data={code.data}
+          controlValues={typedControlValues as any}
+        />
       }
     />
   )

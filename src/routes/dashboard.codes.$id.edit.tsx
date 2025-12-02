@@ -1,7 +1,12 @@
-import { QRCodeEditor } from '@/components/QRCodeEditor'
+import { QRCodeEditor } from '@/lib/qrConfiguration/QRCodeEditor'
 import { db } from '@/db'
 import { qrCodesTable } from '@/db/schema'
 import { authMiddleware } from '@/middleware/authMiddleware'
+import {
+  parseQRConfig,
+  qrConfigSchema,
+  stringifyQRConfig,
+} from '@/lib/qrConfiguration/configuration'
 import {
   createFileRoute,
   useLoaderData,
@@ -22,6 +27,7 @@ const updateQRCode = createServerFn({
       id: z.string(),
       title: z.string().min(1),
       data: z.string().min(1),
+      qrConfig: qrConfigSchema,
     }),
   )
   .handler(async ({ data, context }) => {
@@ -36,6 +42,7 @@ const updateQRCode = createServerFn({
       .set({
         title: data.title,
         data: data.data,
+        qrConfig: stringifyQRConfig(data.qrConfig),
       })
       .where(and(eq(qrCodesTable.id, data.id), eq(qrCodesTable.userId, userId)))
 
@@ -44,6 +51,7 @@ const updateQRCode = createServerFn({
 
 export const Route = createFileRoute('/dashboard/codes/$id/edit')({
   component: RouteComponent,
+  beforeLoad: async () => ({ title: 'Edit' }),
 })
 
 function RouteComponent() {
@@ -55,12 +63,20 @@ function RouteComponent() {
 
   const forcedQRUrl = new URL(`/c/${code.id}`, location.url).toString()
 
+  // Parse and validate qrConfig from database
+  const parsedQRConfig = parseQRConfig(code.qrConfig)
+
   return (
     <QRCodeEditor
       forcedQRUrl={forcedQRUrl}
-      initialData={{ type: code.type, title: code.title, data: code.data }}
+      initialData={{
+        type: code.type,
+        title: code.title,
+        data: code.data,
+        qrControls: parsedQRConfig,
+      }}
       loading={loading}
-      onSave={async ({ title, data }) => {
+      onSave={async ({ title, data, qrControls }) => {
         setLoading(true)
         setError(null)
 
@@ -70,6 +86,7 @@ function RouteComponent() {
               id: code.id,
               title,
               data,
+              qrConfig: qrControls,
             },
           })
           await navigate({

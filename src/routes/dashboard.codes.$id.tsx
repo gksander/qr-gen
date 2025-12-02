@@ -56,7 +56,7 @@ function RouteComponent() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-4">{code.title}</h2>
+      <h2 className="text-2xl font-bold mb-8">{code.title}</h2>
       <Outlet />
     </div>
   )

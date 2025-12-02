@@ -1,11 +1,14 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { useState } from 'react'
 import { db } from '@/db'
 import { qrCodesTable } from '@/db/schema'
 import { authMiddleware } from '@/middleware/authMiddleware'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import {
+  qrConfigSchema,
+  stringifyQRConfig,
+} from '@/lib/qrConfiguration/configuration'
+import { QRCodeEditor } from '@/lib/qrConfiguration/QRCodeEditor'
 import { z } from 'zod'
 import ShortUniqueId from 'short-unique-id'
 
@@ -17,7 +20,9 @@ const createQRCode = createServerFn({
   .middleware([authMiddleware])
   .inputValidator(
     z.object({
-      url: z.url(),
+      title: z.string().min(1),
+      data: z.string().min(1),
+      qrConfig: qrConfigSchema,
     }),
   )
   .handler(async ({ data, context }) => {
@@ -33,14 +38,12 @@ const createQRCode = createServerFn({
       id,
       userId: session.user.id,
       type: 'url',
-      data: data.url,
-      qrConfig: JSON.stringify({}),
+      data: data.data,
+      title: data.title,
+      qrConfig: stringifyQRConfig(data.qrConfig),
     })
 
-    // TODO: throwing redirect doesn't actually work
-    throw redirect({
-      to: '/dashboard/codes',
-    })
+    return { id }
   })
 
 export const Route = createFileRoute('/dashboard/new-code')({
@@ -51,55 +54,38 @@ export const Route = createFileRoute('/dashboard/new-code')({
 })
 
 function RouteComponent() {
-  const [url, setUrl] = useState('')
+  const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
-
-    try {
-      await createQRCode({
-        data: {
-          url,
-        },
-      })
-    } catch (err: any) {
-      // Redirect throws an error, so we need to check if it's actually an error
-      if (err?.message && !err?.message.includes('redirect')) {
-        setError(err.message || 'Failed to create QR code')
-        setLoading(false)
-      }
-      // If it's a redirect, let it propagate
-    }
-  }
 
   return (
     <div>
       <h2 className="text-2xl font-bold mb-4">Create New QR Code</h2>
-      <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
-        <div>
-          <label htmlFor="url" className="block text-sm font-medium mb-2">
-            URL
-          </label>
-          <Input
-            id="url"
-            type="url"
-            placeholder="https://example.com"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            required
-            disabled={loading}
-            className="w-full"
-          />
-        </div>
-        {error && <div className="text-sm text-destructive">{error}</div>}
-        <Button type="submit" disabled={loading}>
-          {loading ? 'Creating...' : 'Create QR Code'}
-        </Button>
-      </form>
+      <QRCodeEditor
+        loading={loading}
+        onSave={async ({ title, data, qrControls }) => {
+          setLoading(true)
+          setError(null)
+
+          try {
+            const result = await createQRCode({
+              data: {
+                title,
+                data,
+                qrConfig: qrControls,
+              },
+            })
+            await navigate({
+              to: '/dashboard/codes/$id',
+              params: { id: result.id },
+            })
+          } catch (err: any) {
+            setError(err.message || 'Failed to create QR code')
+            setLoading(false)
+          }
+        }}
+      />
+      {error && <div className="mt-4 text-sm text-destructive">{error}</div>}
     </div>
   )
 }
